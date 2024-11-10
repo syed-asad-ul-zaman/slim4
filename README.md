@@ -95,7 +95,7 @@ To serve the project from the `/public` directory, configure Laragon as follows:
 
 #### 6. Set Up Project Directories and Permissions
 
-1. **Create directories** for file uploads:
+1. **Create directories** for file uploads if not exist in project:
    ```bash
    mkdir -p storage/uploads/uploaded_files
    mkdir -p storage/uploads/files
