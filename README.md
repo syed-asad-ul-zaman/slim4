@@ -19,7 +19,7 @@ Follow the steps below to set up the project and required dependencies.
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/syed-asad-ul-zaman/slim4.git
 cd your-repository
 composer install
 ```
@@ -102,15 +102,7 @@ To serve the project from the `/public` directory, configure Laragon as follows:
    ```
 2. **Set permissions** to ensure PHP can write to these directories. Right-click each directory, go to **Properties** > **Security**, and enable **Write** permissions for the **Users** group.
 
-#### 7. Environment Configuration
-
-Copy `.env.example` to `.env` and configure any environment variables as needed.
-
-```bash
-cp .env.example .env
-```
-
-#### 8. Run the Application
+#### 7. Run the Application
 
 After completing the setup, start your application with Laragon and test the API endpoints.
 
