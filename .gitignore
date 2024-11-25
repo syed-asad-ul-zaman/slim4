@@ -10,6 +10,7 @@ vendor/
 # Node artifact files
 node_modules/
 dist/
+storage/
 
 # Compiled Java class files
 *.class
