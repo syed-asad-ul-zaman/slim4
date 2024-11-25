@@ -1,3 +1,4 @@
+
 # Slim 4 File Conversion API
 
 This project provides an API built with Slim 4 for file conversions, including converting Word, Excel, and PPT files to PDF, PDF to JPG, and HEIC to JPG.
@@ -13,6 +14,7 @@ Follow the steps below to set up the project and required dependencies.
 3. **ImageMagick**
 4. **LibreOffice**
 5. **Imagick PHP extension**
+6. **Ghostscript** (required for PDF to image conversions)
 
 ### Steps
 
@@ -49,7 +51,26 @@ LibreOffice is used to convert Excel and PowerPoint files to PDF.
     2. Go to **Advanced system settings** > **Environment Variables**.
     3. Find the **Path** variable, click **Edit**, and add the LibreOffice program path (e.g., `C:\Program Files\LibreOffice\program`).
 
-#### 4. Install Imagick PHP Extension
+#### 4. Install Ghostscript
+
+Ghostscript is required for PDF to image conversions.
+
+- **Download Link**: [Ghostscript for Windows](https://ghostscript.com/releases/gsdnld.html)
+- **Installation**:
+  - Download the appropriate Ghostscript installer for your system (choose the 64-bit version).
+  - Run the installer and follow the on-screen instructions.
+  - Add Ghostscript to your system’s PATH:
+    1. Right-click **This PC** > **Properties**.
+    2. Go to **Advanced system settings** > **Environment Variables**.
+    3. Find the **Path** variable, click **Edit**, and add the Ghostscript `bin` directory path (e.g., `C:\Program Files\gs\gs<version>\bin`).
+- **Verify Installation**:
+  - Open a command prompt and type:
+    ```bash
+    gswin64c -version
+    ```
+  - If installed correctly, it should display the Ghostscript version.
+
+#### 5. Install Imagick PHP Extension
 
 The Imagick PHP extension is required to use ImageMagick within PHP.
 
@@ -69,7 +90,7 @@ The Imagick PHP extension is required to use ImageMagick within PHP.
      ```
    - Save the file and restart Laragon.
 
-#### 5. Update Laragon Configuration to Serve the `/public` Directory
+#### 6. Update Laragon Configuration to Serve the `/public` Directory
 
 To serve the project from the `/public` directory, configure Laragon as follows:
 
@@ -93,7 +114,7 @@ To serve the project from the `/public` directory, configure Laragon as follows:
      ```
 4. Restart Laragon and visit `http://your-domain.test` to access the project.
 
-#### 6. Set Up Project Directories and Permissions
+#### 7. Set Up Project Directories and Permissions
 
 1. **Create directories** for file uploads if not exist in project:
    ```bash
@@ -102,7 +123,7 @@ To serve the project from the `/public` directory, configure Laragon as follows:
    ```
 2. **Set permissions** to ensure PHP can write to these directories. Right-click each directory, go to **Properties** > **Security**, and enable **Write** permissions for the **Users** group.
 
-#### 7. Run the Application
+#### 8. Run the Application
 
 After completing the setup, start your application with Laragon and test the API endpoints.
 
@@ -113,9 +134,7 @@ After completing the setup, start your application with Laragon and test the API
 You can use a tool like `curl` or Postman to test file uploads. Example request:
 
 ```bash
-curl --location 'http://your-domain.test/api/convert' \
---header 'Content-Type: multipart/form-data' \
---form 'file=@"/path/to/your/file.docx"'
+curl --location 'http://your-domain.test/api/convert' --header 'Content-Type: multipart/form-data' --form 'file=@"/path/to/your/file.docx"'
 ```
 
 ## Troubleshooting
