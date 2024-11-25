@@ -6,7 +6,8 @@
         "monolog/monolog": "^2.1",
         "slim/php-view": "^3.0",
         "phpoffice/phpword": "^1.3",
-        "spatie/pdf-to-image": "^1.2"
+        "spatie/pdf-to-image": "^1.2",
+        "dompdf/dompdf": "^3.0"
     },
     "autoload": {
         "psr-4": {

@@ -9,6 +9,8 @@ use Imagick;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Container\ContainerInterface;
+use PhpOffice\PhpWord\Settings;
+use Dompdf\Dompdf;
 
 class FileConversionController
 {
@@ -83,9 +85,15 @@ class FileConversionController
 
     private function convertWordToPDF($originalFilePath)
     {
-        $phpWord = IOFactory::load($originalFilePath);
+        $dompdfPath = realpath(__DIR__ . '/../../../vendor/dompdf/dompdf');
+        if (!$dompdfPath || !is_dir($dompdfPath)) {
+            throw new \Exception('Dompdf library path not found: ' . $dompdfPath);
+        }
+        Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
+        Settings::setPdfRendererPath($dompdfPath);
+        $phpWord = \PhpOffice\PhpWord\IOFactory::load($originalFilePath);
         $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
-        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        $pdfWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'PDF');
         $pdfWriter->save($outputPath);
         return $outputPath;
     }
