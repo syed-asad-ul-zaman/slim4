@@ -118,8 +118,8 @@ To serve the project from the `/public` directory, configure Laragon as follows:
 
 1. **Create directories** for file uploads if not exist in project:
    ```bash
-   mkdir -p storage/uploads/uploaded_files
-   mkdir -p storage/uploads/files
+   mkdir -p storage/uploaded_files
+   mkdir -p public/files
    ```
 2. **Set permissions** to ensure PHP can write to these directories. Right-click each directory, go to **Properties** > **Security**, and enable **Write** permissions for the **Users** group.
 
@@ -139,7 +139,7 @@ curl --location 'http://your-domain.test/api/convert' --header 'Content-Type: mu
 
 ## Troubleshooting
 
-- **"Upload target path is not writable"**: Ensure `storage/uploads/uploaded_files` and `storage/uploads/files` are writable by PHP.
+- **"Upload target path is not writable"**: Ensure `storage/uploaded_files` and `public/files` are writable by PHP.
 - **Imagick Not Loaded**: Verify that `php_imagick.dll` is in the PHP `ext` directory and that `extension=php_imagick.dll` is in `php.ini`.
 
 ## License

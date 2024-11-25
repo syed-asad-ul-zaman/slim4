@@ -38,7 +38,8 @@ return function (ContainerBuilder $containerBuilder) {
                 'path_templates' => __DIR__ . '/../templates'
             ],
             'paths' => [
-                'uploads' => __DIR__ . '/../../storage/uploads',
+                'converted_files_path' => __DIR__ . '/../../public/files',
+                'uploaded_files_path' => __DIR__ . '/../../storage/uploaded_files',
             ],
         ],
     ]);

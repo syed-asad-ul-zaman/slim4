@@ -16,12 +16,14 @@ class FileConversionController
 {
     private $log;
     private $uploadsDir;
+    private $convertedDir;
 
     public function __construct(LoggerInterface $logger, ContainerInterface $container) {
         $this->log = $logger;
 
         $settings = $container->get('settings');
-        $this->uploadsDir = $settings['paths']['uploads'];
+        $this->uploadsDir = $settings['paths']['uploaded_files_path'];
+        $this->convertedDir = $settings['paths']['converted_files_path'];
     }
 
     public function convertFile(Request $req, Response $res, $args)
@@ -35,17 +37,18 @@ class FileConversionController
 
         $file = $uploadedFiles['file'];
         $fileType = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
-        $originalFilePath = $this->uploadsDir . '/uploaded_files/' . $file->getClientFilename();
+        $originalFilePath = $this->uploadsDir . '/' . $file->getClientFilename();
         
         $file->moveTo($originalFilePath);
 
         try {
             $convertedFilePath = $this->handleFileConversion($originalFilePath, $fileType);
 
-            $fileUrl = str_replace(
-                [$_SERVER['DOCUMENT_ROOT'], '\\'],
-                ['http://localhost', '/'],
-                realpath($convertedFilePath)
+            $fileUrl = sprintf(
+                '%s://%s/files/%s',
+                isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http', 
+                $_SERVER['HTTP_HOST'], 
+                basename($convertedFilePath)
             );
     
             $responseData = [
@@ -92,40 +95,40 @@ class FileConversionController
         Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
         Settings::setPdfRendererPath($dompdfPath);
         $phpWord = \PhpOffice\PhpWord\IOFactory::load($originalFilePath);
-        $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
+        $convertedPath = $this->convertedDir . '/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
         $pdfWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'PDF');
-        $pdfWriter->save($outputPath);
-        return $outputPath;
+        $pdfWriter->save($convertedPath);
+        return $convertedPath;
     }
 
     private function convertExcelToPDF($originalFilePath)
     {
-        $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
-        exec("soffice --headless --convert-to pdf --outdir " . escapeshellarg(dirname($outputPath)) . " " . escapeshellarg($originalFilePath));
-        return $outputPath;
+        $convertedPath = $this->convertedDir . '/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
+        exec("soffice --headless --convert-to pdf --outdir " . escapeshellarg(dirname($convertedPath)) . " " . escapeshellarg($originalFilePath));
+        return $convertedPath;
     }
 
     private function convertPPTToPDF($originalFilePath)
     {
-        $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
-        exec("soffice --headless --convert-to pdf --outdir " . escapeshellarg(dirname($outputPath)) . " " . escapeshellarg($originalFilePath));
-        return $outputPath;
+        $convertedPath = $this->convertedDir . '/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.pdf';
+        exec("soffice --headless --convert-to pdf --outdir " . escapeshellarg(dirname($convertedPath)) . " " . escapeshellarg($originalFilePath));
+        return $convertedPath;
     }
 
     private function convertPDFToJPG($originalFilePath)
     {
-        $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.jpg';
+        $convertedPath = $this->convertedDir . '/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.jpg';
         $pdf = new Pdf($originalFilePath);
-        $pdf->setOutputFormat('jpg')->saveImage($outputPath);
-        return $outputPath;
+        $pdf->setOutputFormat('jpg')->saveImage($convertedPath);
+        return $convertedPath;
     }
 
     private function convertHEICToJPG($originalFilePath)
     {
-        $outputPath = $this->uploadsDir . '/files/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.jpg';
+        $convertedPath = $this->convertedDir . '/' . pathinfo($originalFilePath, PATHINFO_FILENAME) . '.jpg';
         $imagick = new Imagick($originalFilePath);
         $imagick->setImageFormat('jpg');
-        $imagick->writeImage($outputPath);
-        return $outputPath;
+        $imagick->writeImage($convertedPath);
+        return $convertedPath;
     }
 }
